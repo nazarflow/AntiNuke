@@ -3,6 +3,7 @@ import disnake
 from disnake.ext import commands
 from dotenv import load_dotenv
 import config
+from src import database
 
 # ================================================================================================ #
 # Load environment variables
@@ -22,9 +23,14 @@ client = commands.Bot(
 )
 client.remove_command("help")
 
+# Initialize database
+database.setup_db()
+
 # Attach runtime state to the bot instance (accessible via self.bot in cogs)
-client.user_ids = list(config.USER_IDS)
-client.admins = list(config.ADMIN_IDS)
+# Load from SQLite database, guarantee owner has admin access
+db_admins = database.get_all_admins()
+client.admins = list(set(db_admins + [config.OWNER_ID]))
+client.user_ids = database.get_all_tracked_users()
 client.kick_counter = dict(config.KICK_COUNTER)
 
 # ================================================================================================ #
@@ -32,23 +38,46 @@ client.kick_counter = dict(config.KICK_COUNTER)
 # ================================================================================================ #
 
 def load_extensions():
-    """Recursively load all .py extensions from src/cogs and src/events."""
+    """Load all .py extensions from specific directories."""
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    src_dir = os.path.join(base_dir, "src")
+    
+    # Only scan cogs and events (skip embeds, database, etc.)
+    directories_to_scan = ["src/cogs", "src/events"]
+    
+    total_loaded = 0
+    total_failed = 0
+    failed_modules = []
+    
+    print("\n" + "="*60)
+    print("🚀 INIT: Starting AntiNuke Extension Loader")
+    print("="*60)
 
-    for root, dirs, files in os.walk(src_dir):
-        for filename in files:
-            if filename.endswith(".py") and not filename.startswith("__"):
-                # Convert file path to module path (e.g. src.events.channels.channels_tracker)
-                filepath = os.path.join(root, filename)
-                relative = os.path.relpath(filepath, base_dir)
-                module = relative.replace(os.sep, ".").removesuffix(".py")
+    for relative_dir in directories_to_scan:
+        full_path = os.path.join(base_dir, relative_dir.replace("/", os.sep))
+        for root, dirs, files in os.walk(full_path):
+            for filename in files:
+                if filename.endswith(".py") and not filename.startswith("__"):
+                    filepath = os.path.join(root, filename)
+                    relative = os.path.relpath(filepath, base_dir)
+                    module = relative.replace(os.sep, ".").removesuffix(".py")
 
-                try:
-                    client.load_extension(module)
-                    print(f"  [OK] Loaded: {module}")
-                except Exception as e:
-                    print(f"  [FAIL] Failed to load {module}: {e}")
+                    try:
+                        client.load_extension(module)
+                        print(f"  [+] Loaded successfully : {module}")
+                        total_loaded += 1
+                    except Exception as e:
+                        print(f"  [-] Failed to load      : {module}")
+                        print(f"      └─ Reason: {e}")
+                        failed_modules.append(module)
+                        total_failed += 1
+
+    print("-" * 60)
+    print(f"📊 SUMMARY: Successfully loaded: {total_loaded} / {total_loaded + total_failed}")
+    if total_failed > 0:
+        print(f"❌ ERRORS: {total_failed} modules failed to load.")
+    else:
+        print("✅ ERRORS: 0 (All modules loaded perfectly)")
+    print("="*60 + "\n")
 
 # ================================================================================================ #
 # on_ready

@@ -1,0 +1,72 @@
+[2026-07-07 19:58:03] === ERROR in Event: on_message_edit ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\messages\messages_tracker.py", line 75, in on_message_edit
+    await log_channel.send(
+AttributeError: 'NoneType' object has no attribute 'send'
+
+==================================================
+
+[2026-07-07 19:58:07] === ERROR in Event: on_guild_channel_create (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 59, in on_guild_channel_create
+    await guild.ban(creator, reason="Bot banned for unauthorized actions.")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 19:58:07] === ERROR in Event: on_message_edit ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\messages\messages_tracker.py", line 75, in on_message_edit
+    await log_channel.send(
+AttributeError: 'NoneType' object has no attribute 'send'
+
+==================================================
+
+[2026-07-07 19:58:07] === ERROR in Event: on_guild_channel_create (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 59, in on_guild_channel_create
+    await guild.ban(creator, reason="Bot banned for unauthorized actions.")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 19:59:03] === ERROR in Event: on_message_edit ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\messages\messages_tracker.py", line 75, in on_message_edit
+    await log_channel.send(
+AttributeError: 'NoneType' object has no attribute 'send'
+
+==================================================
+
+[2026-07-07 19:59:04] === ERROR in Event: on_guild_channel_delete (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 112, in on_guild_channel_delete
+    await guild.ban(deleter, reason="Bot banned for unauthorized actions.")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+

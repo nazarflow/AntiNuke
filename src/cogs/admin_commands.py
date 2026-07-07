@@ -1,6 +1,7 @@
 import disnake
 from disnake.ext import commands
 import config
+from src import database
 from src.embeds.members import user_added_to_list, user_already_in_list, user_removed_from_list, user_not_in_list
 
 
@@ -22,7 +23,9 @@ class AdminCommands(commands.Cog):
             )
             return
 
-        self.bot.admins.append(member.id)
+        if member.id not in self.bot.admins:
+            self.bot.admins.append(member.id)
+            database.add_admin(member.id)
         await ctx.send(f"{member.mention} was successfully added to the admin list.")
 
     # ========================================================================================== #
@@ -39,6 +42,7 @@ class AdminCommands(commands.Cog):
 
         if member.id in self.bot.admins:
             self.bot.admins.remove(member.id)
+            database.remove_admin(member.id)
             await ctx.send(f"{member.mention} was successfully removed from the admin list.")
         else:
             await ctx.send(f"{member.mention} is not in the admin list.")
@@ -62,6 +66,7 @@ class AdminCommands(commands.Cog):
             await ctx.send("Access Denied.")
         elif user_id not in self.bot.user_ids:
             self.bot.user_ids.append(user_id)
+            database.add_tracked_user(user_id)
             await ctx.send(embed=user_added_to_list(member))
         else:
             await ctx.send(embed=user_already_in_list(member))
@@ -83,6 +88,7 @@ class AdminCommands(commands.Cog):
 
         if user_id in self.bot.user_ids:
             self.bot.user_ids.remove(user_id)
+            database.remove_tracked_user(user_id)
             await ctx.send(embed=user_removed_from_list(member))
         else:
             await ctx.send(embed=user_not_in_list(member))
