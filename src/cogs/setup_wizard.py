@@ -5,6 +5,8 @@ from src import database
 from src.embeds.dashboard import dashboard_main
 
 
+from src.cogs.dev_panel import DevPanelView
+
 # ================================================================================================ #
 # Persistent Dashboard View (lives forever, survives bot restarts)
 # ================================================================================================ #
@@ -18,15 +20,15 @@ class DashboardView(disnake.ui.View):
         if inter.author.id != config.OWNER_ID:
             await inter.response.send_message("⛔ Доступ лише для розробника.", ephemeral=True)
             return
-        await inter.response.send_message("🔑 **Dev Panel** — В розробці...", ephemeral=True)
+        await inter.response.send_message("Відкриваю Dev Panel...", view=DevPanelView(), ephemeral=True)
 
     @disnake.ui.button(label="Adm", style=disnake.ButtonStyle.primary, custom_id="dash_adm", emoji="🛡️")
     async def btn_adm(self, button: disnake.ui.Button, inter: disnake.MessageInteraction):
-        bot = inter.bot
-        if inter.author.id not in bot.admins:
-            await inter.response.send_message("⛔ Доступ лише для адміністраторів.", ephemeral=True)
+        if inter.author.id != config.OWNER_ID and not database.is_server_owner(inter.guild.id, inter.author.id):
+            await inter.response.send_message("⛔ Доступ лише для власників.", ephemeral=True)
             return
-        await inter.response.send_message("🛡️ **Admin Panel** — В розробці...", ephemeral=True)
+        from src.cogs.admin_panel import AdminPanelView
+        await inter.response.send_message("🛡️ **Admin Panel**", view=AdminPanelView(), ephemeral=True)
 
     @disnake.ui.button(label="Pre-Adm", style=disnake.ButtonStyle.secondary, custom_id="dash_preadm", emoji="👤")
     async def btn_preadm(self, button: disnake.ui.Button, inter: disnake.MessageInteraction):
@@ -248,9 +250,14 @@ class ResetConfirmView(disnake.ui.View):
                 except Exception:
                     pass
 
-            # Delete category
+            # Delete category and all its child channels
             category = inter.guild.get_channel(cat_id)
-            if category:
+            if category and isinstance(category, disnake.CategoryChannel):
+                for ch in category.channels:
+                    try:
+                        await ch.delete(reason="Скидання налаштувань AntiNuke")
+                    except Exception:
+                        pass
                 try:
                     await category.delete(reason="Скидання налаштувань AntiNuke")
                 except Exception:

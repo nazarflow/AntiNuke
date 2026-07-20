@@ -1,7 +1,9 @@
 import disnake
 from disnake.ext import commands
 import config
+from src import database
 from src.embeds import members as embeds
+from src.rate_limiter import limiter
 
 
 class MembersTracker(commands.Cog):
@@ -12,11 +14,12 @@ class MembersTracker(commands.Cog):
 
     def _quarantine_roles(self, member, guild):
         """Build the list of roles to assign during quarantine (preserve booster)."""
-        quarantine = guild.get_role(config.ROLES["quarantine"])
-        server_booster = guild.get_role(config.ROLES["server_booster"])
-        if any(r.id == config.ROLES["server_booster"] for r in member.roles):
-            return [quarantine, server_booster]
-        return [quarantine]
+        quarantine = guild.get_role(database.get_role_id(guild.id, "quarantine") or 0)
+        server_booster = guild.get_role(database.get_role_id(guild.id, "server_booster") or 0)
+        
+        if server_booster and any(r.id == server_booster.id for r in member.roles):
+            return [r for r in [quarantine, server_booster] if r]
+        return [quarantine] if quarantine else []
 
     # ========================================================================================== #
     # on_member_join (unauthorized bot detection)
@@ -24,9 +27,8 @@ class MembersTracker(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
-        channel_id = config.LOG_CHANNELS["bot_joins"]
         guild = member.guild
-        dvp = disnake.utils.get(guild.roles, id=config.ROLES["dvp"])
+        channel_id = database.get_log_channel(guild.id, "bot_joins")
 
         if not member.bot:
             return
@@ -37,18 +39,23 @@ class MembersTracker(commands.Cog):
                 added_by = entry.user
                 break
 
-        if added_by and added_by.id == config.OWNER_ID:
-            await self.bot.get_channel(channel_id).send(
-                f"Authorized developer <@{config.OWNER_ID}> added bot - {member.mention}. All hail the dev!"
-            )
+        if added_by and (added_by.id == config.OWNER_ID or database.is_server_owner(guild.id, added_by.id)):
+            if channel_id:
+                ch = self.bot.get_channel(channel_id)
+                if ch:
+                    await ch.send(
+                        f"Authorized developer <@{config.OWNER_ID}> added bot - {member.mention}. All hail the dev!"
+                    )
         else:
-            roles_to_add = self._quarantine_roles(added_by, guild)
+            roles_to_add = self._quarantine_roles(added_by, guild) if added_by else []
             await member.ban(reason="Unauthorized Bot")
-            await added_by.edit(roles=roles_to_add, reason="Adding bot to server")
-            await self.bot.get_channel(channel_id).send(
-                embed=embeds.bot_joined_unauthorized(member, added_by)
-            )
-            await self.bot.get_channel(channel_id).send(f"{dvp.mention} - Please investigate")
+            if added_by and roles_to_add:
+                await added_by.edit(roles=roles_to_add, reason="Adding bot to server")
+            
+            if channel_id:
+                ch = self.bot.get_channel(channel_id)
+                if ch:
+                    await ch.send(embed=embeds.bot_joined_unauthorized(member, added_by))
 
     # ========================================================================================== #
     # on_member_ban
@@ -56,25 +63,35 @@ class MembersTracker(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_ban(self, guild, user):
-        dvp = guild.get_role(config.ROLES["dvp"])
-        channel_id = config.LOG_CHANNELS["bans"]
+        channel_id = database.get_log_channel(guild.id, "bans")
 
         audit_log = await guild.audit_logs(limit=1, action=disnake.AuditLogAction.ban).flatten()
+        if not audit_log: return
         member = audit_log[0].user
         reason = audit_log[0].reason if audit_log else "No reason provided."
 
         if reason is None:
             reason = "Reason not provided"
+            
+        if member.id == config.OWNER_ID or database.is_server_owner(guild.id, member.id):
+            if channel_id:
+                ch = self.bot.get_channel(channel_id)
+                if ch: await ch.send(embed=embeds.ban_authorized(member, user, reason))
+            return
 
-        if dvp not in member.roles:
+        limiter.add_action(guild.id, member.id, "roles") # Use roles limit for bans
+        if not limiter.check_limit(guild.id, member.id, "roles", member.roles):
             roles_to_add = self._quarantine_roles(member, guild)
-            await member.edit(roles=roles_to_add)
+            if roles_to_add:
+                await member.edit(roles=roles_to_add)
             await guild.unban(user, reason="Banned by mistake")
             embed = embeds.ban_unauthorized(member, user, reason)
         else:
             embed = embeds.ban_authorized(member, user, reason)
 
-        await self.bot.get_channel(channel_id).send(embed=embed)
+        if channel_id:
+            ch = self.bot.get_channel(channel_id)
+            if ch: await ch.send(embed=embed)
 
     # ========================================================================================== #
     # on_voice_state_update
@@ -83,8 +100,11 @@ class MembersTracker(commands.Cog):
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
         if member.id in self.bot.user_ids and before.channel != after.channel and after.channel is not None:
-            channel = self.bot.get_channel(config.LOG_CHANNELS["voice_move"])
-            await member.move_to(channel)
+            channel_id = database.get_log_channel(member.guild.id, "voice_move")
+            if channel_id:
+                channel = self.bot.get_channel(channel_id)
+                if channel:
+                    await member.move_to(channel)
 
 
 def setup(bot):
