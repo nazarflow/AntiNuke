@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AntiNuke Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="login-overlay" class="overlay">
+        <div class="login-box glass">
+            <h2>AntiNuke Auth</h2>
+            <p>Please enter the dashboard credentials.</p>
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+            <button id="login-btn">Login</button>
+            <p id="login-error" class="error-text hidden">Invalid credentials</p>
+        </div>
+    </div>
+
+    <div id="app" class="hidden">
+        <nav class="sidebar glass">
+            <div class="logo">
+                <div class="logo-icon">🛡️</div>
+                <h2>AntiNuke</h2>
+            </div>
+            <ul class="nav-links">
+                <li class="active" data-view="dashboard">Dashboard</li>
+                <li data-view="admins">Admins & Owners</li>
+                <li data-view="limits">Guild Limits</li>
+                <li data-view="logs">Log Channels</li>
+            </ul>
+        </nav>
+
+        <main class="content">
+            <header class="topbar">
+                <div class="header-title">
+                    <h1 id="page-title">Overview</h1>
+                </div>
+                <div class="user-profile">
+                    <span class="status-dot"></span> System Online
+                </div>
+            </header>
+
+            <div id="view-dashboard" class="view active-view">
+                <div class="stats-grid">
+                    <div class="stat-card glass">
+                        <h3>Total Admins</h3>
+                        <p class="stat-value" id="stat-admins">-</p>
+                    </div>
+                    <div class="stat-card glass">
+                        <h3>Tracked Users</h3>
+                        <p class="stat-value" id="stat-tracked">-</p>
+                    </div>
+                    <div class="stat-card glass">
+                        <h3>Server Owners</h3>
+                        <p class="stat-value" id="stat-owners">-</p>
+                    </div>
+                </div>
+                <div class="welcome-card glass mt-2">
+                    <h2>Welcome to the AntiNuke Dashboard</h2>
+                    <p>Select a category from the sidebar to manage bot configuration, limits, and administrators.</p>
+                </div>
+            </div>
+
+            <div id="view-admins" class="view hidden">
+                <div class="card glass">
+                    <div class="card-header">
+                        <h2>Manage Admins</h2>
+                        <button class="btn-primary" onclick="promptAddAdmin()">+ Add Admin</button>
+                    </div>
+                    <div class="table-container">
+                        <table id="admins-table">
+                            <thead>
+                                <tr>
+                                    <th>User ID</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Loaded via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-limits" class="view hidden">
+                <div class="card glass">
+                    <div class="card-header">
+                        <h2>Global Guild Limits</h2>
+                        <input type="number" id="limit-guild-id" placeholder="Guild ID" class="input-small">
+                        <button class="btn-primary" onclick="loadGuildLimits()">Load</button>
+                    </div>
+                    <div id="limits-editor" class="form-grid hidden mt-2">
+                        <!-- Populated by JS -->
+                    </div>
+                    <button id="save-limits-btn" class="btn-success hidden mt-2">Save Limits</button>
+                </div>
+            </div>
+
+            <div id="view-logs" class="view hidden">
+                <div class="card glass">
+                    <h2>Work in Progress</h2>
+                    <p>Log channels configuration UI coming soon.</p>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
