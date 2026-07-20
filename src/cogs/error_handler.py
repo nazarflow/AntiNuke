@@ -57,7 +57,7 @@ class GlobalErrorHandler(commands.Cog):
         await self.notify_developer(error, f"Slash Command: /{cmd_name}")
 
         try:
-            msg = "⚠️ Сталася помилка. Розробник вже повідомлений."
+            msg = "⚠️ An error occurred. Developer notified."
             if inter.response.is_done():
                 await inter.followup.send(msg, ephemeral=True)
             else:
@@ -76,7 +76,7 @@ class GlobalErrorHandler(commands.Cog):
         await self.notify_developer(error, f"Prefix Command: !{ctx.command}")
 
         try:
-            await ctx.send("⚠️ Сталася помилка. Розробник вже повідомлений.")
+            await ctx.send("⚠️ An error occurred. Developer notified.")
         except:
             pass
 
@@ -105,7 +105,7 @@ def setup(bot):
         if args and isinstance(args[0], disnake.Interaction):
             inter = args[0]
             try:
-                msg = "⚠️ Сталася критична помилка. Розробник вже повідомлений."
+                msg = "⚠️ A critical error occurred. Developer notified."
                 if inter.response.is_done():
                     await inter.followup.send(msg, ephemeral=True)
                 else:

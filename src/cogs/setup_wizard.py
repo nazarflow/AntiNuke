@@ -18,21 +18,21 @@ class DashboardView(disnake.ui.View):
     @disnake.ui.button(label="Dev", style=disnake.ButtonStyle.danger, custom_id="dash_dev", emoji="🔑")
     async def btn_dev(self, button: disnake.ui.Button, inter: disnake.MessageInteraction):
         if inter.author.id != config.OWNER_ID:
-            await inter.response.send_message("⛔ Доступ лише для розробника.", ephemeral=True)
+            await inter.response.send_message("⛔ Developer access only.", ephemeral=True)
             return
-        await inter.response.send_message("Відкриваю Dev Panel...", view=DevPanelView(), ephemeral=True)
+        await inter.response.send_message("Opening Dev Panel...", view=DevPanelView(), ephemeral=True)
 
     @disnake.ui.button(label="Adm", style=disnake.ButtonStyle.primary, custom_id="dash_adm", emoji="🛡️")
     async def btn_adm(self, button: disnake.ui.Button, inter: disnake.MessageInteraction):
         if inter.author.id != config.OWNER_ID and not database.is_server_owner(inter.guild.id, inter.author.id):
-            await inter.response.send_message("⛔ Доступ лише для власників.", ephemeral=True)
+            await inter.response.send_message("⛔ Owner access only.", ephemeral=True)
             return
         from src.cogs.admin_panel import AdminPanelView
         await inter.response.send_message("🛡️ **Admin Panel**", view=AdminPanelView(), ephemeral=True)
 
     @disnake.ui.button(label="Pre-Adm", style=disnake.ButtonStyle.secondary, custom_id="dash_preadm", emoji="👤")
     async def btn_preadm(self, button: disnake.ui.Button, inter: disnake.MessageInteraction):
-        await inter.response.send_message("👤 **Pre-Admin Panel** — В розробці...", ephemeral=True)
+        await inter.response.send_message("👤 **Pre-Admin Panel** — WIP...", ephemeral=True)
 
 
 # ================================================================================================ #
@@ -43,16 +43,16 @@ class ChannelInputModal(disnake.ui.Modal):
     def __init__(self):
         components = [
             disnake.ui.TextInput(
-                label="ID категорії",
-                placeholder="Вставте ID категорії...",
+                label="Category ID",
+                placeholder="Insert Category ID...",
                 custom_id="category_id_input",
                 style=disnake.TextInputStyle.short,
                 min_length=17,
                 max_length=21,
             ),
             disnake.ui.TextInput(
-                label="ID каналу",
-                placeholder="Вставте ID текстового каналу...",
+                label="Channel ID",
+                placeholder="Insert Text Channel ID...",
                 custom_id="channel_id_input",
                 style=disnake.TextInputStyle.short,
                 min_length=17,
@@ -60,7 +60,7 @@ class ChannelInputModal(disnake.ui.Modal):
             ),
         ]
         super().__init__(
-            title="Ручне налаштування каналу",
+            title="Manual Channel Setup",
             custom_id="setup_channel_modal",
             components=components,
         )
@@ -73,17 +73,17 @@ class ChannelInputModal(disnake.ui.Modal):
             cat_id = int(cat_id_str)
             ch_id = int(ch_id_str)
         except ValueError:
-            await inter.response.send_message("❌ Невірний формат ID. Мають бути тільки цифри.", ephemeral=True)
+            await inter.response.send_message("❌ Invalid ID format. Must be numbers only.", ephemeral=True)
             return
 
         category = inter.guild.get_channel(cat_id)
         channel = inter.guild.get_channel(ch_id)
 
         if not category or not isinstance(category, disnake.CategoryChannel):
-            await inter.response.send_message("❌ Категорію з таким ID не знайдено.", ephemeral=True)
+            await inter.response.send_message("❌ Category with this ID not found.", ephemeral=True)
             return
         if not channel or not isinstance(channel, disnake.TextChannel):
-            await inter.response.send_message("❌ Текстовий канал з таким ID не знайдено.", ephemeral=True)
+            await inter.response.send_message("❌ Text channel with this ID not found.", ephemeral=True)
             return
 
         # Save to database
@@ -93,9 +93,9 @@ class ChannelInputModal(disnake.ui.Modal):
         await channel.send(embed=dashboard_main(), view=DashboardView())
 
         await inter.response.send_message(
-            f"✅ Налаштування збережено!\n"
-            f"Категорія: `{category.name}`\n"
-            f"Канал: {channel.mention}",
+            f"✅ Settings saved!\n"
+            f"Category: `{category.name}`\n"
+            f"Channel: {channel.mention}",
             ephemeral=True,
         )
 
@@ -117,7 +117,7 @@ class Step2View(disnake.ui.View):
 
     async def interaction_check(self, inter: disnake.MessageInteraction):
         if inter.author.id != config.OWNER_ID:
-            await inter.response.send_message("⛔ Ви не маєте доступу.", ephemeral=True)
+            await inter.response.send_message("⛔ You don't have access.", ephemeral=True)
             return False
         return True
 
@@ -155,11 +155,11 @@ class Step2View(disnake.ui.View):
             await channel.send(embed=dashboard_main(), view=DashboardView())
 
             await inter.edit_original_response(
-                content=f"✅ Успішно створено! Канал: {channel.mention}", view=None
+                content=f"✅ Successfully created! Channel: {channel.mention}", view=None
             )
         except Exception as e:
             await inter.edit_original_response(
-                content=f"❌ Сталася помилка при створенні: {e}", view=None
+                content=f"❌ Error during creation: {e}", view=None
             )
 
     @disnake.ui.button(label="No", style=disnake.ButtonStyle.secondary, custom_id="setup_step2_no")
@@ -190,7 +190,7 @@ class Step1View(disnake.ui.View):
 
     async def interaction_check(self, inter: disnake.MessageInteraction):
         if inter.author.id != config.OWNER_ID:
-            await inter.response.send_message("⛔ Ви не маєте доступу.", ephemeral=True)
+            await inter.response.send_message("⛔ You don't have access.", ephemeral=True)
             return False
         return True
 
@@ -199,7 +199,7 @@ class Step1View(disnake.ui.View):
         self.stop()
         view = Step2View(original_message=self.message)
         await inter.response.edit_message(
-            content="Створити текстовий канал і категорію для автоматичного налаштування?",
+            content="Create text channel and category for automatic setup?",
             view=view,
         )
 
@@ -222,11 +222,11 @@ class ResetConfirmView(disnake.ui.View):
 
     async def interaction_check(self, inter: disnake.MessageInteraction):
         if inter.author.id != config.OWNER_ID:
-            await inter.response.send_message("⛔ Ви не маєте доступу.", ephemeral=True)
+            await inter.response.send_message("⛔ You don't have access.", ephemeral=True)
             return False
         return True
 
-    @disnake.ui.button(label="Скинути", style=disnake.ButtonStyle.danger, custom_id="setup_reset_yes")
+    @disnake.ui.button(label="Reset", style=disnake.ButtonStyle.danger, custom_id="setup_reset_yes")
     async def btn_reset(self, button: disnake.ui.Button, inter: disnake.MessageInteraction):
         self.stop()
         await inter.response.defer(ephemeral=True)
@@ -235,7 +235,7 @@ class ResetConfirmView(disnake.ui.View):
         
         # Respond BEFORE deleting, because deleting the channel invalidates the interaction webhook
         await inter.edit_original_response(
-            content="✅ Запис у базі даних очищено. Видаляю канали...\nТепер можете знову використати `/set` в іншому каналі.", 
+            content="✅ DB record cleared. Deleting channels...\nYou can now use `/set` in another channel.", 
             view=None
         )
 
@@ -246,7 +246,7 @@ class ResetConfirmView(disnake.ui.View):
             channel = inter.guild.get_channel(ch_id)
             if channel:
                 try:
-                    await channel.delete(reason="Скидання налаштувань AntiNuke")
+                    await channel.delete(reason="Resetting AntiNuke settings")
                 except Exception:
                     pass
 
@@ -255,20 +255,20 @@ class ResetConfirmView(disnake.ui.View):
             if category and isinstance(category, disnake.CategoryChannel):
                 for ch in category.channels:
                     try:
-                        await ch.delete(reason="Скидання налаштувань AntiNuke")
+                        await ch.delete(reason="Resetting AntiNuke settings")
                     except Exception:
                         pass
                 try:
-                    await category.delete(reason="Скидання налаштувань AntiNuke")
+                    await category.delete(reason="Resetting AntiNuke settings")
                 except Exception:
                     pass
 
         database.delete_guild_config(inter.guild.id)
 
-    @disnake.ui.button(label="Відміна", style=disnake.ButtonStyle.secondary, custom_id="setup_reset_no")
+    @disnake.ui.button(label="Cancel", style=disnake.ButtonStyle.secondary, custom_id="setup_reset_no")
     async def btn_cancel(self, button: disnake.ui.Button, inter: disnake.MessageInteraction):
         self.stop()
-        await inter.response.edit_message(content="Операцію скасовано.", view=None)
+        await inter.response.edit_message(content="Operation cancelled.", view=None)
 
 
 # ================================================================================================ #
@@ -288,10 +288,10 @@ class SetupWizard(commands.Cog):
             self.bot.add_view(DashboardView())
             self.persistent_views_added = True
 
-    @commands.slash_command(name="set", description="Почати процес налаштування AntiNuke (Тільки для власника)")
+    @commands.slash_command(name="set", description="Start AntiNuke setup process (Owner only)")
     async def cmd_set(self, inter: disnake.ApplicationCommandInteraction):
         if inter.author.id != config.OWNER_ID:
-            await inter.response.send_message("⛔ Ви не маєте доступу до цієї команди.", ephemeral=True)
+            await inter.response.send_message("⛔ You don't have access to this command.", ephemeral=True)
             return
 
         # Check if already configured
@@ -303,8 +303,8 @@ class SetupWizard(commands.Cog):
             if channel:
                 view = ResetConfirmView()
                 await inter.response.send_message(
-                    f"⚠️ Канал налаштування вже існує: {channel.mention}\n"
-                    f"Бажаєте скинути налаштування?",
+                    f"⚠️ Setup channel already exists: {channel.mention}\n"
+                    f"Do you want to reset settings?",
                     view=view,
                     ephemeral=True,
                 )
@@ -317,7 +317,7 @@ class SetupWizard(commands.Cog):
         # Start fresh setup
         view = Step1View()
         await inter.response.send_message(
-            content="Привіт, перед початком налаштування, дай мені роль AI",
+            content="Hello, before setting up, please give me the AI role",
             view=view,
             ephemeral=True,
         )
