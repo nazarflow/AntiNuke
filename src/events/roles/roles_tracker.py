@@ -1,9 +1,10 @@
 import disnake
 from disnake.ext import commands
 import config
-from src import database
+from src.services import admin_service
+from src.services import config_service
+from src.services.limits_service import limiter
 from src.embeds import roles as embeds
-from src.rate_limiter import limiter
 
 
 class RolesTracker(commands.Cog):
@@ -12,18 +13,18 @@ class RolesTracker(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    def _get_roles(self, guild):
+    async def _get_roles(self, guild):
         """Helper to fetch commonly used roles."""
         return {
-            "quarantine": guild.get_role(database.get_role_id(guild.id, "quarantine") or 0),
-            "server_booster": guild.get_role(database.get_role_id(guild.id, "server_booster") or 0),
+            "quarantine": guild.get_role(await config_service.get_role_id(guild.id, "quarantine") or 0),
+            "server_booster": guild.get_role(await config_service.get_role_id(guild.id, "server_booster") or 0),
         }
 
     def _quarantine_roles(self, member, roles):
         """Build the list of roles to assign during quarantine (preserve booster)."""
         booster = roles.get("server_booster")
         quarantine = roles.get("quarantine")
-        
+
         if booster and any(r.id == booster.id for r in member.roles):
             return [r for r in [quarantine, booster] if r]
         return [quarantine] if quarantine else []
@@ -35,14 +36,14 @@ class RolesTracker(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_role_create(self, role):
         guild = role.guild
-        channel_id = database.get_log_channel(guild.id, "role_updates")
-        roles = self._get_roles(guild)
+        channel_id = await config_service.get_log_channel(guild.id, "role_updates")
+        roles = await self._get_roles(guild)
 
         audit_log = await guild.audit_logs(limit=1, action=disnake.AuditLogAction.role_create).flatten()
         if not audit_log: return
         member = audit_log[0].user
-        
-        if member.id == config.OWNER_ID or database.is_server_owner(guild.id, member.id):
+
+        if member.id == config.OWNER_ID or await admin_service.is_server_owner(guild.id, member.id):
             return
 
         if member.bot:
@@ -52,13 +53,13 @@ class RolesTracker(commands.Cog):
                 await role.delete()
                 await member.ban(reason="Role Created without AI")
                 embed = embeds.role_created_by_bot_banned(member, role.name)
-            
+
             if channel_id:
                 ch = self.bot.get_channel(channel_id)
                 if ch: await ch.send(embed=embed)
         else:
             limiter.add_action(guild.id, member.id, "roles")
-            if not limiter.check_limit(guild.id, member.id, "roles", member.roles):
+            if not await limiter.check_limit(guild.id, member.id, "roles", member.roles):
                 await role.delete()
                 roles_to_add = self._quarantine_roles(member, roles)
                 if roles_to_add:
@@ -66,7 +67,7 @@ class RolesTracker(commands.Cog):
                 embed = embeds.role_created_quarantined(member, role.name)
             else:
                 embed = embeds.role_created_authorized(member, role)
-                
+
             if channel_id:
                 ch = self.bot.get_channel(channel_id)
                 if ch: await ch.send(embed=embed)
@@ -78,14 +79,14 @@ class RolesTracker(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_role_delete(self, role):
         guild = role.guild
-        channel_id = database.get_log_channel(guild.id, "role_updates")
-        roles = self._get_roles(guild)
+        channel_id = await config_service.get_log_channel(guild.id, "role_updates")
+        roles = await self._get_roles(guild)
 
         audit_log = await guild.audit_logs(limit=1, action=disnake.AuditLogAction.role_delete).flatten()
         if not audit_log: return
         member = audit_log[0].user
-        
-        if member.id == config.OWNER_ID or database.is_server_owner(guild.id, member.id):
+
+        if member.id == config.OWNER_ID or await admin_service.is_server_owner(guild.id, member.id):
             return
 
         if role.managed:
@@ -97,13 +98,13 @@ class RolesTracker(commands.Cog):
             else:
                 await member.ban(reason="Role Deleted without AI")
                 embed = embeds.role_deleted_by_bot_banned(member, role.name)
-            
+
             if channel_id:
                 ch = self.bot.get_channel(channel_id)
                 if ch: await ch.send(embed=embed)
         else:
             limiter.add_action(guild.id, member.id, "roles")
-            if not limiter.check_limit(guild.id, member.id, "roles", member.roles):
+            if not await limiter.check_limit(guild.id, member.id, "roles", member.roles):
                 new_role = await guild.create_role(
                     name=role.name, color=role.color,
                     hoist=role.hoist, mentionable=role.mentionable,
@@ -115,7 +116,7 @@ class RolesTracker(commands.Cog):
                     await member.edit(roles=roles_to_add)
             else:
                 embed = embeds.role_deleted_authorized(member, role.name)
-                
+
             if channel_id:
                 ch = self.bot.get_channel(channel_id)
                 if ch: await ch.send(embed=embed)
@@ -126,7 +127,7 @@ class RolesTracker(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_role_update(self, before, after):
-        channel_id = database.get_log_channel(after.guild.id, "role_updates")
+        channel_id = await config_service.get_log_channel(after.guild.id, "role_updates")
 
         if before.permissions != after.permissions and after.permissions.administrator:
             audit_log = await after.guild.audit_logs(
@@ -134,12 +135,12 @@ class RolesTracker(commands.Cog):
             ).flatten()
             if not audit_log: return
             member = audit_log[0].user
-            
-            if member.id == config.OWNER_ID or database.is_server_owner(after.guild.id, member.id):
+
+            if member.id == config.OWNER_ID or await admin_service.is_server_owner(after.guild.id, member.id):
                 return
 
             limiter.add_action(after.guild.id, member.id, "roles")
-            if not limiter.check_limit(after.guild.id, member.id, "roles", member.roles):
+            if not await limiter.check_limit(after.guild.id, member.id, "roles", member.roles):
                 await self._revert_role_settings(after, before.guild, member)
             else:
                 if channel_id:
@@ -148,8 +149,8 @@ class RolesTracker(commands.Cog):
 
     async def _revert_role_settings(self, role, guild, member):
         """Revert a role's permissions back to default and quarantine the offender."""
-        channel_id = database.get_log_channel(guild.id, "role_updates")
-        roles = self._get_roles(guild)
+        channel_id = await config_service.get_log_channel(guild.id, "role_updates")
+        roles = await self._get_roles(guild)
         default_role = guild.default_role
 
         await role.edit(
@@ -172,9 +173,9 @@ class RolesTracker(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_update(self, before, after):
-        channel_id = database.get_log_channel(after.guild.id, "role_updates")
+        channel_id = await config_service.get_log_channel(after.guild.id, "role_updates")
         guild = after.guild
-        roles = self._get_roles(guild)
+        roles = await self._get_roles(guild)
 
         added_roles = set(after.roles) - set(before.roles)
         removed_roles = set(before.roles) - set(after.roles)
@@ -194,12 +195,12 @@ class RolesTracker(commands.Cog):
 
                 if role in after_roles - before_roles:
                     user = entry.user
-                    if user.id == config.OWNER_ID or database.is_server_owner(guild.id, user.id):
+                    if user.id == config.OWNER_ID or await admin_service.is_server_owner(guild.id, user.id):
                         break
 
                     if role.permissions.administrator:
                         limiter.add_action(guild.id, user.id, "roles")
-                        if not limiter.check_limit(guild.id, user.id, "roles", user.roles):
+                        if not await limiter.check_limit(guild.id, user.id, "roles", user.roles):
                             embed = embeds.role_assigned_admin_punish(user, role, after, roles.get("quarantine"))
                             roles_to_add = self._quarantine_roles(user, roles)
                             if roles_to_add:
@@ -224,17 +225,15 @@ class RolesTracker(commands.Cog):
 
                 if role in before_roles - after_roles:
                     user = entry.user
-                    if user.id == config.OWNER_ID or database.is_server_owner(guild.id, user.id):
+                    if user.id == config.OWNER_ID or await admin_service.is_server_owner(guild.id, user.id):
                         break
 
                     if role.name == "Ai":
                         limiter.add_action(guild.id, user.id, "roles")
-                        if not limiter.check_limit(guild.id, user.id, "roles", user.roles):
+                        if not await limiter.check_limit(guild.id, user.id, "roles", user.roles):
                             roles_to_add = self._quarantine_roles(user, roles)
                             if roles_to_add:
                                 await user.edit(roles=roles_to_add)
-                            # Let's not try to fetch 'ai' from db since we deleted ai_id, but the user removed "Ai" role
-                            # so we add it back using the role object we just got from the event
                             await after.add_roles(role)
                             embed = embeds.role_removed_ai_punish(user, role.name, after, roles.get("quarantine"))
                         else:

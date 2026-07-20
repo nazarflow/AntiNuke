@@ -1,7 +1,8 @@
 import disnake
 from disnake.ext import commands
 import config
-from src import database
+from src.services import admin_service
+from src.services import config_service
 from src.embeds.dashboard import dashboard_main
 
 
@@ -24,7 +25,7 @@ class DashboardView(disnake.ui.View):
 
     @disnake.ui.button(label="Adm", style=disnake.ButtonStyle.primary, custom_id="dash_adm", emoji="🛡️")
     async def btn_adm(self, button: disnake.ui.Button, inter: disnake.MessageInteraction):
-        if inter.author.id != config.OWNER_ID and not database.is_server_owner(inter.guild.id, inter.author.id):
+        if inter.author.id != config.OWNER_ID and not await admin_service.is_server_owner(inter.guild.id, inter.author.id):
             await inter.response.send_message("⛔ Owner access only.", ephemeral=True)
             return
         from src.cogs.admin_panel import AdminPanelView
@@ -87,7 +88,7 @@ class ChannelInputModal(disnake.ui.Modal):
             return
 
         # Save to database
-        database.save_guild_config(inter.guild.id, cat_id, ch_id)
+        await config_service.save_guild_config(inter.guild.id, cat_id, ch_id)
 
         # Send dashboard embed to the channel
         await channel.send(embed=dashboard_main(), view=DashboardView())
@@ -149,7 +150,7 @@ class Step2View(disnake.ui.View):
             )
 
             # Save to database
-            database.save_guild_config(guild.id, category.id, channel.id)
+            await config_service.save_guild_config(guild.id, category.id, channel.id)
 
             # Send dashboard embed
             await channel.send(embed=dashboard_main(), view=DashboardView())
@@ -231,17 +232,17 @@ class ResetConfirmView(disnake.ui.View):
         self.stop()
         await inter.response.defer(ephemeral=True)
 
-        guild_config = database.get_guild_config(inter.guild.id)
-        
+        guild_config = await config_service.get_guild_config(inter.guild.id)
+
         # Respond BEFORE deleting, because deleting the channel invalidates the interaction webhook
         await inter.edit_original_response(
-            content="✅ DB record cleared. Deleting channels...\nYou can now use `/set` in another channel.", 
+            content="✅ DB record cleared. Deleting channels...\nYou can now use `/set` in another channel.",
             view=None
         )
 
         if guild_config:
             cat_id, ch_id = guild_config
-            
+
             # Delete channel
             channel = inter.guild.get_channel(ch_id)
             if channel:
@@ -263,7 +264,7 @@ class ResetConfirmView(disnake.ui.View):
                 except Exception:
                     pass
 
-        database.delete_guild_config(inter.guild.id)
+        await config_service.delete_guild_config(inter.guild.id)
 
     @disnake.ui.button(label="Cancel", style=disnake.ButtonStyle.secondary, custom_id="setup_reset_no")
     async def btn_cancel(self, button: disnake.ui.Button, inter: disnake.MessageInteraction):
@@ -295,7 +296,7 @@ class SetupWizard(commands.Cog):
             return
 
         # Check if already configured
-        guild_config = database.get_guild_config(inter.guild.id)
+        guild_config = await config_service.get_guild_config(inter.guild.id)
         if guild_config:
             cat_id, ch_id = guild_config
             channel = inter.guild.get_channel(ch_id)
@@ -312,7 +313,7 @@ class SetupWizard(commands.Cog):
                 return
             else:
                 # Channel was deleted externally, clean up the DB record
-                database.delete_guild_config(inter.guild.id)
+                await config_service.delete_guild_config(inter.guild.id)
 
         # Start fresh setup
         view = Step1View()

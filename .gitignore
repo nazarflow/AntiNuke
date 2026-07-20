@@ -1,2 +1,22 @@
+# Secrets & environment
 .env
-__pycache__*.db
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Database files
+*.db
+*.sqlite3
+
+# Alembic compiled
+alembic/__pycache__/
+
+# Docker volumes (if accidentally created locally)
+pg_data/
+
+# OS
+.DS_Store
+Thumbs.db

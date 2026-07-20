@@ -1,7 +1,7 @@
 import disnake
 from disnake.ext import commands
 import config
-from src import database
+from src.services import admin_service
 from src.embeds.members import user_added_to_list, user_already_in_list, user_removed_from_list, user_not_in_list
 
 
@@ -25,7 +25,7 @@ class AdminCommands(commands.Cog):
 
         if member.id not in self.bot.admins:
             self.bot.admins.append(member.id)
-            database.add_admin(member.id)
+            await admin_service.add_admin(member.id)
         await ctx.send(f"{member.mention} was successfully added to the admin list.")
 
     # ========================================================================================== #
@@ -42,11 +42,10 @@ class AdminCommands(commands.Cog):
 
         if member.id in self.bot.admins:
             self.bot.admins.remove(member.id)
-            database.remove_admin(member.id)
+            await admin_service.remove_admin(member.id)
             await ctx.send(f"{member.mention} was successfully removed from the admin list.")
         else:
             await ctx.send(f"{member.mention} is not in the admin list.")
 
 def setup(bot):
     bot.add_cog(AdminCommands(bot))
-

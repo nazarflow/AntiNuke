@@ -1,5 +1,6 @@
 import disnake
-from src import database
+from src.services import admin_service
+from src.services import config_service
 import config
 
 
@@ -36,7 +37,7 @@ class CreateAdminRoleModal(disnake.ui.Modal):
         wh_l, wh_t = self.parse_limits(inter.text_values["webhooks_limits"])
         try:
             role = await inter.guild.create_role(name=name, reason="Created via Admin Panel")
-            database.save_custom_role_limits(role.id, inter.guild.id, channels_limit=ch_l, channels_time=ch_t, roles_limit=rl_l, roles_time=rl_t, links_limit=lnk_l, links_time=lnk_t, webhooks_limit=wh_l, webhooks_time=wh_t)
+            await admin_service.save_custom_role_limits(role.id, inter.guild.id, channels_limit=ch_l, channels_time=ch_t, roles_limit=rl_l, roles_time=rl_t, links_limit=lnk_l, links_time=lnk_t, webhooks_limit=wh_l, webhooks_time=wh_t)
             await inter.edit_original_response(f"✅ Role {role.mention} created with custom limits!")
         except Exception as e:
             await inter.edit_original_response(f"❌ Error: {e}")
@@ -54,12 +55,7 @@ class RemoveAdminRoleModal(disnake.ui.Modal):
             return
         role_id = int(rid)
         role = inter.guild.get_role(role_id)
-        conn = database.get_connection()
-        cursor = conn.cursor()
-        cursor.execute('DELETE FROM custom_role_limits WHERE role_id = ?', (role_id,))
-        changes = cursor.rowcount
-        conn.commit()
-        conn.close()
+        changes = await admin_service.delete_custom_role_limits(role_id)
         msg = f"✅ Role `ID:{role_id}` removed from DB." if changes > 0 else f"⚠️ Role `ID:{role_id}` not found in DB."
         if role:
             try:
@@ -89,12 +85,7 @@ class EditAdminRoleLimitsModal(disnake.ui.Modal):
         except ValueError:
             await inter.response.send_message("❌ All limits must be numbers.", ephemeral=True)
             return
-        conn = database.get_connection()
-        cursor = conn.cursor()
-        cursor.execute('UPDATE custom_role_limits SET channels_limit=?, roles_limit=?, links_limit=?, webhooks_limit=? WHERE role_id=?',
-                       (vals["channels_limit"], vals["roles_limit"], vals["links_limit"], vals["webhooks_limit"], self.role_id))
-        conn.commit()
-        conn.close()
+        await admin_service.save_custom_role_limits(self.role_id, inter.guild.id, **vals)
         await inter.response.send_message(f"✅ Limits for role `ID:{self.role_id}` updated!", ephemeral=True)
 
 
@@ -143,7 +134,7 @@ class CreateAdminUserModal(disnake.ui.Modal):
         rl_l, rl_t = self.parse_limits(inter.text_values["roles_limits"])
         lnk_l, lnk_t = self.parse_limits(inter.text_values["links_limits"])
         wh_l, wh_t = self.parse_limits(inter.text_values["webhooks_limits"])
-        database.save_custom_user_limits(user_id, inter.guild.id, channels_limit=ch_l, channels_time=ch_t, roles_limit=rl_l, roles_time=rl_t, links_limit=lnk_l, links_time=lnk_t, webhooks_limit=wh_l, webhooks_time=wh_t)
+        await admin_service.save_custom_user_limits(user_id, inter.guild.id, channels_limit=ch_l, channels_time=ch_t, roles_limit=rl_l, roles_time=rl_t, links_limit=lnk_l, links_time=lnk_t, webhooks_limit=wh_l, webhooks_time=wh_t)
         await inter.response.send_message(f"✅ User <@{user_id}> added with custom limits!", ephemeral=True)
 
 
@@ -157,7 +148,7 @@ class RemoveAdminUserModal(disnake.ui.Modal):
         if not uid.isdigit():
             await inter.response.send_message("❌ Invalid ID format.", ephemeral=True)
             return
-        changes = database.delete_custom_user_limits(int(uid))
+        changes = await admin_service.delete_custom_user_limits(int(uid))
         if changes > 0:
             await inter.response.send_message(f"✅ User `ID:{uid}` removed from DB.", ephemeral=True)
         else:
@@ -181,12 +172,7 @@ class EditAdminUserLimitsModal(disnake.ui.Modal):
         except ValueError:
             await inter.response.send_message("❌ All limits must be numbers.", ephemeral=True)
             return
-        conn = database.get_connection()
-        cursor = conn.cursor()
-        cursor.execute('UPDATE custom_user_limits SET channels_limit=?, roles_limit=?, links_limit=?, webhooks_limit=? WHERE user_id=?',
-                       (vals["channels_limit"], vals["roles_limit"], vals["links_limit"], vals["webhooks_limit"], self.user_id))
-        conn.commit()
-        conn.close()
+        await admin_service.save_custom_user_limits(self.user_id, inter.guild.id, **vals)
         await inter.response.send_message(f"✅ Limits for user `ID:{self.user_id}` updated!", ephemeral=True)
 
 
@@ -219,7 +205,7 @@ class AddTrustedUserModal(disnake.ui.Modal):
         bot = inter.bot
         if user_id not in bot.user_ids:
             bot.user_ids.append(user_id)
-            database.add_tracked_user(user_id)
+            await admin_service.add_tracked_user(user_id)
             await inter.response.send_message(f"✅ User <@{user_id}> added to trusted list.", ephemeral=True)
         else:
             await inter.response.send_message(f"⚠️ User <@{user_id}> is already in the list.", ephemeral=True)
@@ -239,7 +225,7 @@ class RemoveTrustedUserModal(disnake.ui.Modal):
         bot = inter.bot
         if user_id in bot.user_ids:
             bot.user_ids.remove(user_id)
-            database.remove_tracked_user(user_id)
+            await admin_service.remove_tracked_user(user_id)
             await inter.response.send_message(f"✅ User <@{user_id}> removed from trusted list.", ephemeral=True)
         else:
             await inter.response.send_message(f"⚠️ User <@{user_id}> is not in the list.", ephemeral=True)
@@ -254,7 +240,7 @@ class AdminPanelView(disnake.ui.View):
         super().__init__(timeout=300.0)
 
     async def interaction_check(self, inter: disnake.MessageInteraction):
-        if inter.author.id == config.OWNER_ID or database.is_server_owner(inter.guild.id, inter.author.id):
+        if inter.author.id == config.OWNER_ID or await admin_service.is_server_owner(inter.guild.id, inter.author.id):
             return True
         await inter.response.send_message("⛔ Only owners can use this panel.", ephemeral=True)
         return False
@@ -281,13 +267,10 @@ class AdminPanelView(disnake.ui.View):
             return
         role_id = int(rid)
         role = inter.guild.get_role(role_id)
-        limits = database.get_custom_role_limits(role_id)
+        limits = await admin_service.get_custom_role_limits(role_id)
         # Auto-Doctor
         if limits is not None and not role:
-            conn = database.get_connection()
-            cursor = conn.cursor()
-            cursor.execute('DELETE FROM custom_role_limits WHERE role_id = ?', (role_id,))
-            conn.commit(); conn.close()
+            await admin_service.delete_custom_role_limits(role_id)
             await inter.edit_original_response(content=f"❌ Role `ID:{role_id}` not found on server. Removed from DB. Recommended to recreate.")
             return
         elif limits is None and not role:
@@ -325,10 +308,10 @@ class AdminPanelView(disnake.ui.View):
             return
         user_id = int(uid)
         member = inter.guild.get_member(user_id)
-        limits = database.get_custom_user_limits(user_id)
+        limits = await admin_service.get_custom_user_limits(user_id)
         # Auto-Doctor
         if limits is not None and not member:
-            database.delete_custom_user_limits(user_id)
+            await admin_service.delete_custom_user_limits(user_id)
             await inter.edit_original_response(content=f"❌ User `ID:{user_id}` not found on server. Removed from DB. Recommended to re-add.")
             return
         elif limits is None and not member:

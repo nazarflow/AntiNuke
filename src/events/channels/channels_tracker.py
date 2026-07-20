@@ -2,9 +2,10 @@ import disnake
 from disnake.ext import commands
 from datetime import timedelta
 import config
-from src import database
+from src.services import admin_service
+from src.services import config_service
+from src.services.limits_service import limiter
 from src.embeds import channels as embeds
-from src.rate_limiter import limiter
 
 
 class ChannelsTracker(commands.Cog):
@@ -13,11 +14,11 @@ class ChannelsTracker(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    def _get_roles(self, guild):
+    async def _get_roles(self, guild):
         """Helper to fetch commonly used roles."""
         return {
-            "quarantine": guild.get_role(database.get_role_id(guild.id, "quarantine") or 0),
-            "server_booster": guild.get_role(database.get_role_id(guild.id, "server_booster") or 0),
+            "quarantine": guild.get_role(await config_service.get_role_id(guild.id, "quarantine") or 0),
+            "server_booster": guild.get_role(await config_service.get_role_id(guild.id, "server_booster") or 0),
         }
 
     def _quarantine_roles(self, member, roles):
@@ -35,9 +36,9 @@ class ChannelsTracker(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_channel_create(self, channel):
         guild = channel.guild
-        log_channel_id = database.get_log_channel(guild.id, "channel_create")
+        log_channel_id = await config_service.get_log_channel(guild.id, "channel_create")
         log_channel = self.bot.get_channel(log_channel_id) if log_channel_id else None
-        
+
         creator = None
         created_at = channel.created_at
 
@@ -46,27 +47,27 @@ class ChannelsTracker(commands.Cog):
                 creator = entry.user
 
         if not creator: return
-        
-        if creator.id == config.OWNER_ID or database.is_server_owner(guild.id, creator.id):
+
+        if creator.id == config.OWNER_ID or await admin_service.is_server_owner(guild.id, creator.id):
             return
 
-        roles = self._get_roles(guild)
+        roles = await self._get_roles(guild)
 
         if creator.bot:
             member = guild.get_member(creator.id)
-            
+
             # Allow if bot has AI role
             if member and member.get_role(config.AI_ROLE_ID):
                 if log_channel: await log_channel.send(embed=embeds.channel_create_info(channel, creator))
                 return
-                
+
             # Or allow if bot has an admin custom role with limits
             if member:
                 limiter.add_action(guild.id, creator.id, "channels")
-                if limiter.check_limit(guild.id, creator.id, "channels", member.roles):
+                if await limiter.check_limit(guild.id, creator.id, "channels", member.roles):
                     if log_channel: await log_channel.send(embed=embeds.channel_create_info(channel, creator))
                     return
-            
+
             await guild.ban(creator, reason="Bot banned for unauthorized actions.")
             if log_channel:
                 await log_channel.send(embed=embeds.channel_create_bot_warning(creator))
@@ -74,7 +75,7 @@ class ChannelsTracker(commands.Cog):
             return
         else:
             limiter.add_action(guild.id, creator.id, "channels")
-            if not limiter.check_limit(guild.id, creator.id, "channels", creator.roles):
+            if not await limiter.check_limit(guild.id, creator.id, "channels", creator.roles):
                 roles_to_add = self._quarantine_roles(creator, roles)
                 if roles_to_add:
                     try:
@@ -82,7 +83,7 @@ class ChannelsTracker(commands.Cog):
                     except Exception:
                         pass
                 if log_channel:
-                    await log_channel.send(embed=embeds.channel_create_punish(creator, 0)) # 0 just for placeholder now
+                    await log_channel.send(embed=embeds.channel_create_punish(creator, 0))
                 await channel.delete()
             else:
                 if log_channel:
@@ -95,7 +96,7 @@ class ChannelsTracker(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_channel_delete(self, channel):
         guild = channel.guild
-        log_channel_id = database.get_log_channel(guild.id, "channel_delete")
+        log_channel_id = await config_service.get_log_channel(guild.id, "channel_delete")
         log_channel = self.bot.get_channel(log_channel_id) if log_channel_id else None
 
         deleter = None
@@ -107,22 +108,22 @@ class ChannelsTracker(commands.Cog):
         if deleter is None:
             return
 
-        if deleter.id == config.OWNER_ID or database.is_server_owner(guild.id, deleter.id):
+        if deleter.id == config.OWNER_ID or await admin_service.is_server_owner(guild.id, deleter.id):
             return
 
-        roles = self._get_roles(guild)
+        roles = await self._get_roles(guild)
 
         if deleter.bot:
             member = guild.get_member(deleter.id)
-            
+
             # Allow if bot has AI role
             if member and member.get_role(config.AI_ROLE_ID):
                 if log_channel: await log_channel.send(embed=embeds.channel_delete_info(channel.name, deleter))
                 return
-                
+
             if member:
                 limiter.add_action(guild.id, deleter.id, "channels")
-                if limiter.check_limit(guild.id, deleter.id, "channels", member.roles):
+                if await limiter.check_limit(guild.id, deleter.id, "channels", member.roles):
                     if log_channel: await log_channel.send(embed=embeds.channel_delete_info(channel.name, deleter))
                     return
 
@@ -131,7 +132,7 @@ class ChannelsTracker(commands.Cog):
                 await log_channel.send(embed=embeds.channel_delete_bot_warning(deleter))
         else:
             limiter.add_action(guild.id, deleter.id, "channels")
-            if not limiter.check_limit(guild.id, deleter.id, "channels", deleter.roles):
+            if not await limiter.check_limit(guild.id, deleter.id, "channels", deleter.roles):
                 roles_to_add = self._quarantine_roles(deleter, roles)
                 if roles_to_add:
                     await deleter.edit(roles=roles_to_add, reason="User moved to quarantine for exceeding channel deletion limit.")
@@ -169,9 +170,9 @@ class ChannelsTracker(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_channel_update(self, before, after):
         guild = after.guild
-        channel_id = database.get_log_channel(guild.id, "channel_update")
+        channel_id = await config_service.get_log_channel(guild.id, "channel_update")
         log_channel = self.bot.get_channel(channel_id) if channel_id else None
-        roles = self._get_roles(guild)
+        roles = await self._get_roles(guild)
 
         audit_log = await guild.audit_logs(
             limit=1, action=disnake.AuditLogAction.overwrite_update
@@ -179,26 +180,26 @@ class ChannelsTracker(commands.Cog):
         if not audit_log: return
         user = audit_log[0].user
 
-        if user.id == config.OWNER_ID or database.is_server_owner(guild.id, user.id):
+        if user.id == config.OWNER_ID or await admin_service.is_server_owner(guild.id, user.id):
             return
 
         if user.bot:
             member = guild.get_member(user.id)
-            
+
             if member and member.get_role(config.AI_ROLE_ID):
                 if log_channel: await log_channel.send(embed=embeds.channel_update_bot(user, after))
                 return
-                
+
             if member:
                 limiter.add_action(guild.id, user.id, "channels")
-                if limiter.check_limit(guild.id, user.id, "channels", member.roles):
+                if await limiter.check_limit(guild.id, user.id, "channels", member.roles):
                     if log_channel: await log_channel.send(embed=embeds.channel_update_bot(user, after))
                     return
-                    
+
             await user.ban(reason="Channel permission changes")
         else:
             limiter.add_action(guild.id, user.id, "channels")
-            if not limiter.check_limit(guild.id, user.id, "channels", user.roles):
+            if not await limiter.check_limit(guild.id, user.id, "channels", user.roles):
                 if isinstance(after, disnake.TextChannel) and before.overwrites != after.overwrites:
                     for role, overwrite in after.overwrites.items():
                         if isinstance(role, disnake.Role) and overwrite != before.overwrites.get(role):
