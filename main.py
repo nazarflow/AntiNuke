@@ -1,9 +1,15 @@
+import asyncio
 import os
+import uvicorn
+
 import disnake
 from disnake.ext import commands
 from dotenv import load_dotenv
+
 import config
-from src import database
+from src.database import init_db
+from src.database import repository as db
+from src.api.app import app
 
 # ================================================================================================ #
 # Load environment variables
@@ -23,15 +29,6 @@ client = commands.Bot(
 )
 client.remove_command("help")
 
-# Initialize database
-database.setup_db()
-
-# Attach runtime state to the bot instance (accessible via self.bot in cogs)
-# Load from SQLite database, guarantee owner has admin access
-db_admins = database.get_all_admins()
-client.admins = list(set(db_admins + [config.OWNER_ID]))
-client.user_ids = database.get_all_tracked_users()
-client.kick_counter = dict(config.KICK_COUNTER)
 
 # ================================================================================================ #
 # Auto-load all extensions (cogs & events)
@@ -94,12 +91,43 @@ async def on_ready():
     )
     print(f"Logged in as {client.user}")
 
+
 # ================================================================================================ #
 # Start
 # ================================================================================================ #
 
-if __name__ == "__main__":
-    print("Loading extensions...")
+async def main():
+    print("="*60)
+    print("  AntiNuke Bot & Web API Initialization")
+    print("="*60)
+    
+    # 1. Initialize database and schemas
+    print("[*] Initializing Database...")
+    await init_db()
+
+    # 2. Load runtime state
+    print("[*] Loading Runtime State...")
+    db_admins = await db.get_all_admins()
+    client.admins = list(set(db_admins + [config.OWNER_ID]))
+    client.user_ids = await db.get_all_tracked_users()
+    client.kick_counter = dict(config.KICK_COUNTER)
+
+    # 3. Load bot extensions
     load_extensions()
-    print("Starting bot...")
-    client.run(TOKEN)
+
+    # 4. Configure FastAPI Uvicorn Server
+    uvicorn_config = uvicorn.Config(app, host="0.0.0.0", port=8000, log_level="info")
+    server = uvicorn.Server(uvicorn_config)
+
+    # 5. Start both tasks concurrently in the same event loop
+    print("\n🚀 Starting Disnake Client and FastAPI Server concurrently...")
+    await asyncio.gather(
+        server.serve(),
+        client.start(TOKEN)
+    )
+
+if __name__ == "__main__":
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("Shutdown requested.")

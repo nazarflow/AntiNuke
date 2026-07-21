@@ -1,72 +1,704 @@
-[2026-07-07 19:58:03] === ERROR in Event: on_message_edit ===
+[2026-07-07 21:22:25] === ERROR in Event: on_message ===
 Traceback (most recent call last):
   File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
     await coro(*args, **kwargs)
-  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\messages\messages_tracker.py", line 75, in on_message_edit
-    await log_channel.send(
-AttributeError: 'NoneType' object has no attribute 'send'
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\messages\messages_tracker.py", line 23, in on_message
+    log_channel = self.bot.get_channel(database.get_log_channel(guild_id, "links_spam") or 0)
+NameError: name 'database' is not defined
 
 ==================================================
 
-[2026-07-07 19:58:07] === ERROR in Event: on_guild_channel_create (Missing Permissions) ===
+[2026-07-07 21:22:40] === ERROR in Event: on_message ===
 Traceback (most recent call last):
   File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
     await coro(*args, **kwargs)
-  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 59, in on_guild_channel_create
-    await guild.ban(creator, reason="Bot banned for unauthorized actions.")
-  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
-    await self._state.http.ban(
-  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
-    raise Forbidden(response, data)
-disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\messages\messages_tracker.py", line 23, in on_message
+    log_channel = self.bot.get_channel(database.get_log_channel(guild_id, "links_spam") or 0)
+NameError: name 'database' is not defined
 
 ==================================================
 
-[2026-07-07 19:58:07] === ERROR in Event: on_message_edit ===
+[2026-07-07 21:23:07] === ERROR in Event: on_message ===
 Traceback (most recent call last):
   File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
     await coro(*args, **kwargs)
-  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\messages\messages_tracker.py", line 75, in on_message_edit
-    await log_channel.send(
-AttributeError: 'NoneType' object has no attribute 'send'
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\messages\messages_tracker.py", line 23, in on_message
+    log_channel = self.bot.get_channel(database.get_log_channel(guild_id, "links_spam") or 0)
+NameError: name 'database' is not defined
 
 ==================================================
 
-[2026-07-07 19:58:07] === ERROR in Event: on_guild_channel_create (Missing Permissions) ===
+[2026-07-07 21:23:08] === ERROR in Event: on_guild_channel_delete (Missing Permissions) ===
 Traceback (most recent call last):
   File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
     await coro(*args, **kwargs)
-  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 59, in on_guild_channel_create
-    await guild.ban(creator, reason="Bot banned for unauthorized actions.")
-  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
-    await self._state.http.ban(
-  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
-    raise Forbidden(response, data)
-disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
-
-==================================================
-
-[2026-07-07 19:59:03] === ERROR in Event: on_message_edit ===
-Traceback (most recent call last):
-  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
-    await coro(*args, **kwargs)
-  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\messages\messages_tracker.py", line 75, in on_message_edit
-    await log_channel.send(
-AttributeError: 'NoneType' object has no attribute 'send'
-
-==================================================
-
-[2026-07-07 19:59:04] === ERROR in Event: on_guild_channel_delete (Missing Permissions) ===
-Traceback (most recent call last):
-  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
-    await coro(*args, **kwargs)
-  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 112, in on_guild_channel_delete
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 124, in on_guild_channel_delete
     await guild.ban(deleter, reason="Bot banned for unauthorized actions.")
   File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
     await self._state.http.ban(
   File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
     raise Forbidden(response, data)
 disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 21:25:42] === ERROR in Event: on_guild_channel_create (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 67, in on_guild_channel_create
+    await guild.ban(creator, reason="Bot banned for unauthorized actions.")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 21:45:43] === ERROR in Event: on_guild_channel_delete (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 116, in on_guild_channel_delete
+    await guild.ban(deleter, reason="Bot banned for unauthorized actions.")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 21:45:46] === ERROR in Event: on_guild_channel_delete (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 116, in on_guild_channel_delete
+    await guild.ban(deleter, reason="Bot banned for unauthorized actions.")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 21:46:22] === ERROR in Event: on_guild_channel_create (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 63, in on_guild_channel_create
+    await guild.ban(creator, reason="Bot banned for unauthorized actions.")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 21:46:23] === ERROR in Event: on_guild_channel_create (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 63, in on_guild_channel_create
+    await guild.ban(creator, reason="Bot banned for unauthorized actions.")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 21:46:39] === ERROR in Event: on_guild_channel_create (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 63, in on_guild_channel_create
+    await guild.ban(creator, reason="Bot banned for unauthorized actions.")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 21:46:40] === ERROR in Event: on_guild_channel_create (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 63, in on_guild_channel_create
+    await guild.ban(creator, reason="Bot banned for unauthorized actions.")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 21:46:40] === ERROR in Event: on_guild_channel_create (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 63, in on_guild_channel_create
+    await guild.ban(creator, reason="Bot banned for unauthorized actions.")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 21:46:40] === ERROR in Event: on_guild_channel_create (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 63, in on_guild_channel_create
+    await guild.ban(creator, reason="Bot banned for unauthorized actions.")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 21:46:41] === ERROR in Event: on_guild_channel_create (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 63, in on_guild_channel_create
+    await guild.ban(creator, reason="Bot banned for unauthorized actions.")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 21:46:41] === ERROR in Event: on_guild_channel_create (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 63, in on_guild_channel_create
+    await guild.ban(creator, reason="Bot banned for unauthorized actions.")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 21:46:41] === ERROR in Event: on_guild_channel_create (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 63, in on_guild_channel_create
+    await guild.ban(creator, reason="Bot banned for unauthorized actions.")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 21:46:42] === ERROR in Event: on_guild_channel_create (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 63, in on_guild_channel_create
+    await guild.ban(creator, reason="Bot banned for unauthorized actions.")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 21:46:42] === ERROR in Event: on_guild_channel_create (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 63, in on_guild_channel_create
+    await guild.ban(creator, reason="Bot banned for unauthorized actions.")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 21:46:42] === ERROR in Event: on_guild_channel_create (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 63, in on_guild_channel_create
+    await guild.ban(creator, reason="Bot banned for unauthorized actions.")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 21:46:43] === ERROR in Event: on_guild_role_create (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\roles\roles_tracker.py", line 53, in on_guild_role_create
+    await member.ban(reason="Role Created without AI")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\member.py", line 829, in ban
+    await self.guild.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 21:46:43] === ERROR in Event: on_guild_role_delete (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\roles\roles_tracker.py", line 98, in on_guild_role_delete
+    await member.ban(reason="Role Deleted without AI")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\member.py", line 829, in ban
+    await self.guild.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 21:46:44] === ERROR in Event: on_guild_role_create (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\roles\roles_tracker.py", line 53, in on_guild_role_create
+    await member.ban(reason="Role Created without AI")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\member.py", line 829, in ban
+    await self.guild.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 21:46:44] === ERROR in Event: on_guild_role_delete (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\roles\roles_tracker.py", line 98, in on_guild_role_delete
+    await member.ban(reason="Role Deleted without AI")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\member.py", line 829, in ban
+    await self.guild.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 21:47:38] === ERROR in Event: on_guild_role_create (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\roles\roles_tracker.py", line 53, in on_guild_role_create
+    await member.ban(reason="Role Created without AI")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\member.py", line 829, in ban
+    await self.guild.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 21:47:39] === ERROR in Event: on_guild_role_delete (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\roles\roles_tracker.py", line 98, in on_guild_role_delete
+    await member.ban(reason="Role Deleted without AI")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\member.py", line 829, in ban
+    await self.guild.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 21:53:45] === ERROR in Event: on_guild_channel_delete (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 116, in on_guild_channel_delete
+    await guild.ban(deleter, reason="Bot banned for unauthorized actions.")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 21:53:48] === ERROR in Event: on_guild_channel_delete (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 116, in on_guild_channel_delete
+    await guild.ban(deleter, reason="Bot banned for unauthorized actions.")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 22:14:19] === ERROR in Event: on_guild_channel_create (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 72, in on_guild_channel_create
+    await guild.ban(creator, reason="Bot banned for unauthorized actions.")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 22:14:19] === ERROR in Event: on_guild_channel_create (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 72, in on_guild_channel_create
+    await guild.ban(creator, reason="Bot banned for unauthorized actions.")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 22:14:38] === ERROR in Event: on_guild_channel_create (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 72, in on_guild_channel_create
+    await guild.ban(creator, reason="Bot banned for unauthorized actions.")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 22:14:38] === ERROR in Event: on_guild_channel_create (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 72, in on_guild_channel_create
+    await guild.ban(creator, reason="Bot banned for unauthorized actions.")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 22:14:39] === ERROR in Event: on_guild_channel_create (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 72, in on_guild_channel_create
+    await guild.ban(creator, reason="Bot banned for unauthorized actions.")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 22:14:39] === ERROR in Event: on_guild_channel_create (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 72, in on_guild_channel_create
+    await guild.ban(creator, reason="Bot banned for unauthorized actions.")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 22:14:39] === ERROR in Event: on_guild_channel_create (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 72, in on_guild_channel_create
+    await guild.ban(creator, reason="Bot banned for unauthorized actions.")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 22:14:39] === ERROR in Event: on_guild_channel_create (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 72, in on_guild_channel_create
+    await guild.ban(creator, reason="Bot banned for unauthorized actions.")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 22:14:40] === ERROR in Event: on_guild_channel_create (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 72, in on_guild_channel_create
+    await guild.ban(creator, reason="Bot banned for unauthorized actions.")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 22:14:40] === ERROR in Event: on_guild_channel_create (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 72, in on_guild_channel_create
+    await guild.ban(creator, reason="Bot banned for unauthorized actions.")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 22:14:40] === ERROR in Event: on_guild_channel_create (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 72, in on_guild_channel_create
+    await guild.ban(creator, reason="Bot banned for unauthorized actions.")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 22:14:40] === ERROR in Event: on_guild_channel_create (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 72, in on_guild_channel_create
+    await guild.ban(creator, reason="Bot banned for unauthorized actions.")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 22:14:41] === ERROR in Event: on_guild_role_create (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\roles\roles_tracker.py", line 55, in on_guild_role_create
+    await member.ban(reason="Role Created without AI")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\member.py", line 829, in ban
+    await self.guild.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 22:14:42] === ERROR in Event: on_guild_role_delete (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\roles\roles_tracker.py", line 101, in on_guild_role_delete
+    await member.ban(reason="Role Deleted without AI")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\member.py", line 829, in ban
+    await self.guild.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 22:14:42] === ERROR in Event: on_guild_role_create (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\roles\roles_tracker.py", line 55, in on_guild_role_create
+    await member.ban(reason="Role Created without AI")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\member.py", line 829, in ban
+    await self.guild.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 22:14:42] === ERROR in Event: on_guild_role_delete (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\roles\roles_tracker.py", line 101, in on_guild_role_delete
+    await member.ban(reason="Role Deleted without AI")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\member.py", line 829, in ban
+    await self.guild.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 22:14:43] === ERROR in Event: on_guild_role_create (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\roles\roles_tracker.py", line 55, in on_guild_role_create
+    await member.ban(reason="Role Created without AI")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\member.py", line 829, in ban
+    await self.guild.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 22:14:43] === ERROR in Event: on_guild_role_delete (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\roles\roles_tracker.py", line 101, in on_guild_role_delete
+    await member.ban(reason="Role Deleted without AI")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\member.py", line 829, in ban
+    await self.guild.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 22:27:14] === ERROR in Event: on_guild_role_create (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\roles\roles_tracker.py", line 53, in on_guild_role_create
+    await member.ban(reason="Role Created without AI")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\member.py", line 829, in ban
+    await self.guild.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 22:27:14] === ERROR in Event: on_guild_role_delete (Missing Permissions) ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\roles\roles_tracker.py", line 98, in on_guild_role_delete
+    await member.ban(reason="Role Deleted without AI")
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\member.py", line 829, in ban
+    await self.guild.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\guild.py", line 4263, in ban
+    await self._state.http.ban(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 415, in request
+    raise Forbidden(response, data)
+disnake.errors.Forbidden: 403 Forbidden (error code: 50013): Missing Permissions
+
+==================================================
+
+[2026-07-07 22:41:55] === ERROR in Event: on_guild_channel_delete ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\channels\channels_tracker.py", line 120, in on_guild_channel_delete
+    if log_channel: await log_channel.send(embed=embeds.channel_delete_info(channel.name, deleter))
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\abc.py", line 1800, in send
+    data = await state.http.send_message(
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 417, in request
+    raise NotFound(response, data)
+disnake.errors.NotFound: 404 Not Found (error code: 10003): Unknown Channel
+
+==================================================
+
+[2026-07-08 07:10:43] === ERROR in Event: on_voice_state_update ===
+Traceback (most recent call last):
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\client.py", line 722, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\Nazar\Desktop\AntiNuke(Original)\src\events\members\members_tracker.py", line 107, in on_voice_state_update
+    await member.move_to(channel)
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\member.py", line 1143, in move_to
+    await self.edit(voice_channel=channel, reason=reason)
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\member.py", line 1082, in edit
+    data = await http.edit_member(guild_id, self.id, reason=reason, **payload)
+  File "C:\Users\Nazar\AppData\Local\Programs\Python\Python310\lib\site-packages\disnake\http.py", line 421, in request
+    raise HTTPException(response, data)
+disnake.errors.HTTPException: 400 Bad Request (error code: 50024): Cannot execute action on this channel type
 
 ==================================================
 
