@@ -1,63 +1,71 @@
 import pytest
-import pytest_asyncio
-from tests.conftest import ROLE_IDS, OWNER_ID
+from unittest.mock import AsyncMock
 
-@pytest.fixture
-def quarantine_role(mock_guild):
-    """Fixture for the Quarantine role."""
-    return mock_guild.get_role(ROLE_IDS['quarantine'])
-
-@pytest.fixture
-def dvp_role(mock_guild):
-    """Fixture for the DVP role."""
-    return mock_guild.get_role(ROLE_IDS['dvp'])
-
-@pytest.fixture
-def ai_role(mock_guild):
-    """Fixture for the AI role."""
-    return mock_guild.get_role(ROLE_IDS['ai'])
-
-@pytest.fixture
-def server_booster_role(mock_guild):
-    """Fixture for the Server Booster role."""
-    return mock_guild.get_role(ROLE_IDS['server_booster'])
-
-@pytest.fixture
-def roles_dict(quarantine_role, dvp_role, ai_role, server_booster_role):
-    """Fixture for a dictionary of roles."""
-    return {
-        'quarantine': quarantine_role,
-        'dvp': dvp_role,
-        'ai': ai_role,
-        'server_booster': server_booster_role
+@pytest.fixture(autouse=True)
+def mock_tracker_services(monkeypatch):
+    """Mock the new services specifically for the event trackers."""
+    ROLES = {
+        "quarantine": 1111,
+        "dvp": 2222,
+        "server_booster": 4444,
+        "ai": 1524139770437959690
+    }
+    LOG_CHANNELS = {
+        "channel_create": 5555,
+        "channel_delete": 5556,
+        "channel_update": 5557,
+        "bot_joins": 5558,
+        "member_join": 5559,
+        "bans": 5560,
+        "role_updates": 5561,
+        "webhooks": 5562,
+        "voice_move": 5563,
+        "message_edit_delete": 5564,
+        "links_spam": 5565
     }
 
-@pytest.fixture
-def owner_member(make_member, dvp_role, mock_guild):
-    """Fixture for the owner member."""
-    return make_member(OWNER_ID, roles=[dvp_role], guild=mock_guild)
+    async def get_role_id_side_effect(guild_id, role_type):
+        return ROLES.get(role_type)
 
-@pytest.fixture
-def dvp_member(make_member, dvp_role, mock_guild):
-    """Fixture for a regular DVP member."""
-    return make_member(222222, roles=[dvp_role], guild=mock_guild)
+    async def get_log_channel_side_effect(guild_id, log_type):
+        return LOG_CHANNELS.get(log_type)
 
-@pytest.fixture
-def regular_member(make_member, mock_guild):
-    """Fixture for a regular member with no special roles."""
-    return make_member(333333, roles=[], guild=mock_guild)
+    async def check_limit_side_effect(guild_id, user_id, action_type, user_roles):
+        if hasattr(user_roles, "__iter__"):
+            for r in user_roles:
+                if getattr(r, "id", None) == 2222:  # DVP
+                    return True
+        return False
 
-@pytest.fixture
-def booster_member(make_member, server_booster_role, mock_guild):
-    """Fixture for a server booster member."""
-    return make_member(444444, roles=[server_booster_role], guild=mock_guild)
+    get_role_mock = AsyncMock(side_effect=get_role_id_side_effect)
+    get_log_mock = AsyncMock(side_effect=get_log_channel_side_effect)
+    is_server_owner_mock = AsyncMock(return_value=False)
+    check_limit_mock = AsyncMock(side_effect=check_limit_side_effect)
 
-@pytest.fixture
-def ai_bot_member(make_member, ai_role, mock_guild):
-    """Fixture for an authorized AI bot member."""
-    return make_member(555555, roles=[ai_role], bot=True, guild=mock_guild)
+    # Patch channels tracker
+    monkeypatch.setattr("src.events.channels.channels_tracker.config_service.get_role_id", get_role_mock)
+    monkeypatch.setattr("src.events.channels.channels_tracker.config_service.get_log_channel", get_log_mock)
+    monkeypatch.setattr("src.events.channels.channels_tracker.admin_service.is_server_owner", is_server_owner_mock)
+    monkeypatch.setattr("src.events.channels.channels_tracker.limiter.check_limit", check_limit_mock)
+    monkeypatch.setattr("src.events.channels.channels_tracker.limiter.add_action", lambda *a: None)
 
-@pytest.fixture
-def unauthorized_bot_member(make_member, mock_guild):
-    """Fixture for an unauthorized bot member."""
-    return make_member(666666, roles=[], bot=True, guild=mock_guild)
+    # Patch members tracker
+    monkeypatch.setattr("src.events.members.members_tracker.config_service.get_role_id", get_role_mock)
+    monkeypatch.setattr("src.events.members.members_tracker.config_service.get_log_channel", get_log_mock)
+    monkeypatch.setattr("src.events.members.members_tracker.admin_service.is_server_owner", is_server_owner_mock)
+    monkeypatch.setattr("src.events.members.members_tracker.limiter.check_limit", check_limit_mock)
+    monkeypatch.setattr("src.events.members.members_tracker.limiter.add_action", lambda *a: None)
+
+    # Patch roles tracker
+    monkeypatch.setattr("src.events.roles.roles_tracker.config_service.get_role_id", get_role_mock)
+    monkeypatch.setattr("src.events.roles.roles_tracker.config_service.get_log_channel", get_log_mock)
+    monkeypatch.setattr("src.events.roles.roles_tracker.admin_service.is_server_owner", is_server_owner_mock)
+    monkeypatch.setattr("src.events.roles.roles_tracker.limiter.check_limit", check_limit_mock)
+    monkeypatch.setattr("src.events.roles.roles_tracker.limiter.add_action", lambda *a: None)
+
+    # Patch webhooks tracker
+    monkeypatch.setattr("src.events.webhooks.webhooks_tracker.config_service.get_role_id", get_role_mock)
+    monkeypatch.setattr("src.events.webhooks.webhooks_tracker.config_service.get_log_channel", get_log_mock)
+    monkeypatch.setattr("src.events.webhooks.webhooks_tracker.admin_service.is_server_owner", is_server_owner_mock)
+    monkeypatch.setattr("src.events.webhooks.webhooks_tracker.limiter.check_limit", check_limit_mock)
+    monkeypatch.setattr("src.events.webhooks.webhooks_tracker.limiter.add_action", lambda *a: None)
