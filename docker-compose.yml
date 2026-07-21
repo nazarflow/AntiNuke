@@ -1,0 +1,50 @@
+# docker-compose.yml
+# Orchestrates the bot container and its PostgreSQL database.
+#
+# Usage:
+#   Development (SQLite):  just run `python main.py` locally — no Docker needed.
+#   Production (Docker):   `docker compose up -d`
+#
+# Environment variables are loaded from the .env file automatically.
+
+version: "3.9"
+
+services:
+
+  # ─── PostgreSQL Database ───────────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    container_name: antinuke_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-antinuke}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-antinuke}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-antinuke}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─── AntiNuke Discord Bot ──────────────────────────────────────────────────
+  bot:
+    build: .
+    container_name: antinuke_bot
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy   # Wait until Postgres is ready
+    env_file: .env                   # Loads TOKEN, DATABASE_URL, etc.
+    environment:
+      # Override DATABASE_URL to point at the 'db' container (internal DNS)
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-antinuke}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-antinuke}
+    ports:
+      - "8000:8000"
+
+volumes:
+  pg_data:
+    driver: local
